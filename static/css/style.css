@@ -1,0 +1,96 @@
+body {
+    background-color: #212121;
+    color: white;
+}
+
+.loader {
+    display: flex;
+    align-items: center;
+}
+
+.bar {
+    display: inline-block;
+    width: 3px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, .5);
+    border-radius: 10px;
+    animation: scale-up4 1s linear infinite;
+}
+
+.bar:nth-child(2) {
+    height: 35px;
+    margin: 0 5px;
+    animation-delay: .25s;
+}
+
+.bar:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+@keyframes scale-up4 {
+    20% {
+        background-color: #ffff;
+        transform: scaleY(1.5);
+    }
+
+    40% {
+        transform: scaleY(1);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.drag-area {
+    border: 2px dashed #3498db;
+    transition: all 0.3s ease;
+}
+
+.drag-area:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+    border-color: #2ecc71;
+}
+
+.drag-area.active {
+    border: 2px solid #2ecc71;
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.result-image {
+    transition: transform 0.3s ease;
+}
+
+.result-image:hover {
+    transform: scale(1.05);
+}
+
+@media (orientation: portrait) {
+    .container {
+        flex-direction: column;
+    }
+}

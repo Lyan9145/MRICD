@@ -1,5 +1,6 @@
 import os
 import logging
+from functools import partial
 from pathlib import Path
 import time
 import torch
@@ -13,6 +14,7 @@ from tqdm import tqdm
 from dice_loss import dice_loss
 
 from model import UNet
+from model import UNet1 as UNet
 # from model import UNet2Plus as UNet
 # from model import UNet3Plus as UNet
 # from model import UNet3Plus_DeepSup_CGM as UNet
@@ -127,7 +129,7 @@ def train_model(
             Path(CKPT_DIR).mkdir(parents=True, exist_ok=True)
             state_dict = model.state_dict()
             # state_dict['mask_values'] = dataset.mask_values
-            torch.save(state_dict, os.path.join(CKPT_DIR, f'{val_score}_{time.time()}.pth'))
+            torch.save(state_dict, os.path.join(CKPT_DIR, f'{val_score}_{round(time.time(), 2)}.pth'))
             logging.info(f'Checkpoint {epoch} saved!')
 
 
@@ -136,8 +138,8 @@ if __name__ == '__main__':
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = UNet(n_channels=4, n_classes=1)
-    model.load_state_dict(torch.load("./ckpt/0.7929651141166687_1729587779.756493.pth"))
-    # model.eval()
+    # model.load_state_dict(torch.load("./ckpt/0.7929651141166687_1729587779.756493.pth"))
+
     logging.info(f'Using device: {device}.\n'
                  f'Network:\n'
                  f'\t{model.n_channels} input channels.\n'
@@ -146,21 +148,23 @@ if __name__ == '__main__':
     # model = nn.DataParallel(model, [0, 1])
     model.to(device=device, memory_format=torch.channels_last)
 
+    train = partial(
+        train_model,
+        model=model,
+        device=device,
+        epochs=20,
+        batch_size=8,
+        learning_rate=2e-8,
+        momentum=0.995
+    )
+
     try:
-        # train_model(model=model, device=device, amp=True, learning_rate = 5e-8)
-        train_model(
-            model=model,
-            device=device,
-            amp=True,
-            epochs=20,
-            batch_size=8,
-            learning_rate = 2e-8,
-            momentum=0.995
-        )
+        # train_model(model=model, device=device, amp=True, epochs=20, batch_size=8, learning_rate = 2e-8, momentum=0.995)
+        train(amp=True)
     except torch.cuda.OutOfMemoryError:
         logging.error('Detected OutOfMemoryError! '
                       'Enabling checkpointing to reduce memory usage, but this slows down training. '
                       'Consider enabling AMP (--amp) for fast and memory efficient training')
         torch.cuda.empty_cache()
         model.use_checkpointing()
-        train_model(model=model, device=device, amp=False)
+        train(amp=True)

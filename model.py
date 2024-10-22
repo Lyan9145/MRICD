@@ -50,16 +50,17 @@ class ModelUNet:
         
     #     return np.array(images)
 
-    def predict(self, images: Image):
+    def predict(self, images: Image, threshold: float = 0.68):
         images = np.array(images)
 
         self.model.eval()
         with torch.no_grad():
             images.to(device=self.device, dtype=torch.float32)
             self.model.to(device=self.device)
-            pred_mask = self.model(images)
-        pred_mask = pred_mask.squeeze().cpu().detach().numpy()
-        pred_mask = (pred_mask - np.min(pred_mask)) * 1.2 / (np.max(pred_mask) - np.min(pred_mask))
+            res = self.model(images)
+        pred_mask = res.cpu().squeeze().detach().numpy()
+        pred_mask = (pred_mask - pred_mask.min()) / (pred_mask.max() - pred_mask.min())
+        pred_mask = pred_mask > (threshold * pred_mask.max())
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image

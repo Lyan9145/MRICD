@@ -52,6 +52,7 @@ class ModelUNet:
 
     def predict(self, images: Image):
         images = np.array(images)
+
         self.model.eval()
         with torch.no_grad():
             images.to(device=self.device, dtype=torch.float32)
@@ -68,9 +69,6 @@ class ModelUNet:
         im = Image.open(buf).convert('RGBA')
 
         return im
-
-
-
 
 
 #  Test run model

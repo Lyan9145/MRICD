@@ -1,0 +1,6 @@
+./localwheels/torch_npu-2.1.0.post7-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+torchvision == 1.6.0
+numpy
+Pillow
+nibabel
+flask

@@ -1,0 +1,6 @@
+torch == 2.1.0
+torchvision == 1.6.0
+numpy
+Pillow
+nibabel
+flask

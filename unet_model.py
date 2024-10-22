@@ -22,7 +22,7 @@ class ModelUNet:
         if not ckpt:
             raise FileNotFoundError("No checkpoint found in ./ckpt")
         self.ckpt = sorted(ckpt, key=lambda x: x.stat().st_mtime, reverse=True)[0]
-        self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device))
+        self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device, weights_only=False))
 
 
     # def load_data(img_path: Path, data_type: str, key_frame: int = 50):

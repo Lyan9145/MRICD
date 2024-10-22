@@ -176,3 +176,4 @@ cython_debug/
 /train/datasets/BraTS2021_Training_Data/
 
 *.npz
+/train/datasets/nii2jpg_output/

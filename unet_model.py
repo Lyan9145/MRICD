@@ -5,7 +5,7 @@ import torch
 import numpy as np
 import nibabel as nib
 from pathlib import Path
-from model import UNet
+from model.unet_model import UNet
 
 class ModelUNet:
     device = None

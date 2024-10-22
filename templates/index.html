@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>MRI Cyber Doctor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css"
-          integrity="sha512-OQDNdI5rpnZ0BRhhJc+btbbtnxaj+LdQFeh0V9/igiEPDiWE2fG+ZsXl0JEH+bjXKPJ3zcXqNyP4/F/NegVdZg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        integrity="sha512-OQDNdI5rpnZ0BRhhJc+btbbtnxaj+LdQFeh0V9/igiEPDiWE2fG+ZsXl0JEH+bjXKPJ3zcXqNyP4/F/NegVdZg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             background-color: #212121;
             color: white;
         }
+
         .loader {
             display: flex;
             align-items: center;
         }
+
         .bar {
             display: inline-block;
             width: 3px;
@@ -24,63 +27,80 @@
             border-radius: 10px;
             animation: scale-up4 1s linear infinite;
         }
+
         .bar:nth-child(2) {
             height: 35px;
             margin: 0 5px;
             animation-delay: .25s;
         }
+
         .bar:nth-child(3) {
             animation-delay: 0.5s;
         }
+
         @keyframes scale-up4 {
             20% {
                 background-color: #ffff;
                 transform: scaleY(1.5);
             }
+
             40% {
                 transform: scaleY(1);
             }
         }
+
         .fade-in {
             animation: fadeIn 0.3s ease-in;
         }
+
         .fade-out {
             animation: fadeOut 0.3s ease-out;
         }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
         }
+
         @keyframes fadeOut {
             from {
                 opacity: 1;
             }
+
             to {
                 opacity: 0;
             }
         }
+
         .drag-area {
             border: 2px dashed #3498db;
             transition: all 0.3s ease;
         }
+
         .drag-area:hover {
             background-color: rgba(52, 152, 219, 0.1);
             border-color: #2ecc71;
         }
+
         .drag-area.active {
             border: 2px solid #2ecc71;
             background-color: rgba(46, 204, 113, 0.1);
         }
+
         .result-image {
             transition: transform 0.3s ease;
         }
+
         .result-image:hover {
             transform: scale(1.05);
+            cursor: pointer;
         }
+
         @media (orientation: portrait) {
             .container {
                 flex-direction: column;
@@ -88,284 +108,309 @@
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col items-center justify-center bg-gray-900">
-<div class="container mx-auto px-4 py-8 flex flex-wrap items-center justify-center gap-8 max-w-6xl">
-    <div class="w-full flex items-center justify-center mb-8">
-        <h1 id="title" class="text-4xl font-bold text-blue-400 mr-4">MRI Cyber Doctor</h1>
-        <div class="relative inline-block text-left">
-            <div>
-                <button type="button"
+    <div class="container mx-auto px-4 py-8 flex flex-wrap items-center justify-center gap-8 max-w-6xl">
+        <div class="w-full flex items-center justify-center mb-8">
+            <h1 id="title" class="text-4xl font-bold text-blue-400 mr-4">MRI Cyber Doctor</h1>
+            <div class="relative inline-block text-left">
+                <div>
+                    <button type="button"
                         class="inline-flex justify-center w-full rounded-md border border-gray-700 shadow-sm px-4 py-2 bg-gray-800 text-sm mt-2 font-medium text-gray-300 hover:bg-gray-700 focus:outline-none"
                         id="language-menu-button" aria-expanded="false" aria-haspopup="true">
-                    <span id="language-button-text">English</span>
-                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg"
-                         viewBox="0 0 20 20"
-                         fill="currentColor" aria-hidden="true">
-                        <path fill-rule="evenodd"
-                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
+                        <span id="language-button-text">English</span>
+                        <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0
                              111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0
-                             010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                </button>
+                             010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+                    role="menu" aria-orientation="vertical" aria-labelledby="language-menu-button" tabindex="-1"
+                    id="language-menu">
+                    <div class="py-1" role="none">
+                        <a href="#" data-lang="en"
+                            class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
+                            role="menuitem">English</a>
+                        <a href="#" data-lang="zh"
+                            class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
+                            role="menuitem">中文</a>
+                        <a href="#" data-lang="ja"
+                            class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
+                            role="menuitem">日本語</a>
+                    </div>
+                </div>
             </div>
-            <div
-                class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
-                role="menu" aria-orientation="vertical" aria-labelledby="language-menu-button" tabindex="-1"
-                id="language-menu">
-                <div class="py-1" role="none">
-                    <a href="#" data-lang="en"
-                       class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
-                       role="menuitem">English</a>
-                    <a href="#" data-lang="zh"
-                       class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
-                       role="menuitem">中文</a>
-                    <a href="#" data-lang="ja"
-                       class="language-option text-gray-300 block px-4 py-2 text-sm hover:bg-gray-700"
-                       role="menuitem">日本語</a>
+        </div>
+        <div class="w-full lg:w-1/2 max-w-md">
+            <div id="drag-area"
+                class="drag-area bg-gray-800 rounded-lg p-8 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center min-h-[300px]">
+                <i class="ri-upload-cloud-2-line text-6xl mb-4 text-blue-400"></i>
+                <h3 id="drag-drop-text" class="text-xl mb-2">Drag & Drop to Upload File</h3>
+                <span id="or-text" class="text-gray-400">OR</span>
+                <p id="click-to-browse-text" class="mt-2 text-blue-400 hover:underline">Click to Browse</p>
+                <input type="file" hidden id="file-input" accept=".png, .jpg, .jpeg">
+            </div>
+        </div>
+        <div class="w-full lg:w-1/2 max-w-md">
+            <h2 id="result-text" class="text-2xl font-semibold mb-4 text-center">Result</h2>
+            <div class="relative">
+                <div id="result-container"
+                    class="w-full aspect-square bg-gray-800 rounded-lg border-2 border-blue-400 flex items-center justify-center overflow-hidden">
+                    <div id="result-prompt" class="text-center p-4">
+                        <i class="ri-image-line text-6xl mb-4 text-blue-400"></i>
+                        <p id="upload-prompt" class="text-lg text-gray-400">Upload an image to see the result</p>
+                    </div>
+                    <img id="result-image" src="" alt="Result"
+                        class="w-full h-full object-cover rounded-lg result-image hidden">
+                </div>
+                <div id="loading"
+                    class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg hidden">
+                    <div class="loader">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="w-full lg:w-1/2 max-w-md">
-        <div id="drag-area"
-             class="drag-area bg-gray-800 rounded-lg p-8 text-center cursor-pointer transition-all duration-300 flex flex-col items-center justify-center min-h-[300px]">
-            <i class="ri-upload-cloud-2-line text-6xl mb-4 text-blue-400"></i>
-            <h3 id="drag-drop-text" class="text-xl mb-2">Drag & Drop to Upload File</h3>
-            <span id="or-text" class="text-gray-400">OR</span>
-            <p id="click-to-browse-text" class="mt-2 text-blue-400 hover:underline">Click to Browse</p>
-            <input type="file" hidden id="file-input" accept=".png, .jpg, .jpeg">
-        </div>
-    </div>
-    <div class="w-full lg:w-1/2 max-w-md">
-        <h2 id="result-text" class="text-2xl font-semibold mb-4 text-center">Result</h2>
-        <div class="relative">
-            <div id="result-container"
-                 class="w-full aspect-square bg-gray-800 rounded-lg border-2 border-blue-400 flex items-center justify-center overflow-hidden">
-                <div id="result-prompt" class="text-center p-4">
-                    <i class="ri-image-line text-6xl mb-4 text-blue-400"></i>
-                    <p id="upload-prompt" class="text-lg text-gray-400">Upload an image to see the result</p>
-                </div>
-                <img id="result-image" src="" alt="Result"
-                     class="w-full h-full object-cover rounded-lg result-image hidden">
-            </div>
-            <div id="loading"
-                 class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg hidden">
-                <div class="loader">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="error-modal"
-     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
-    <div class="bg-gray-800 text-white p-8 rounded-lg max-w-md">
-        <h3 id="error-title" class="text-xl font-bold mb-4">Error</h3>
-        <p id="error-message" class="mb-4"></p>
-        <button id="close-modal"
+    <div id="error-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden z-50">
+        <div class="bg-gray-800 text-white p-8 rounded-lg max-w-md">
+            <h3 id="error-title" class="text-xl font-bold mb-4">Error</h3>
+            <p id="error-message" class="mb-4"></p>
+            <button id="close-modal"
                 class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-300 focus:outline-none">Close</button>
+        </div>
     </div>
-</div>
-<div id="enlarged-modal"
-     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden z-50">
-    <img id="enlarged-image" src="" alt="Enlarged Result"
-         class="max-w-full max-h-full object-contain">
-</div>
-<script>
-    const dragArea = document.getElementById('drag-area');
-    const fileInput = document.getElementById('file-input');
-    const resultContainer = document.getElementById('result-container');
-    const resultPrompt = document.getElementById('result-prompt');
-    const resultImage = document.getElementById('result-image');
-    const loading = document.getElementById('loading');
-    const errorModal = document.getElementById('error-modal');
-    const errorMessage = document.getElementById('error-message');
-    const closeModal = document.getElementById('close-modal');
-    const enlargedModal = document.getElementById('enlarged-modal');
-    const enlargedImage = document.getElementById('enlarged-image');
-    const languageMenuButton = document.getElementById('language-menu-button');
-    const languageMenu = document.getElementById('language-menu');
-    const translations = {
-        'en': {
-            'language_name': 'English',
-            'title': 'MRI Cyber Doctor',
-            'drag_drop': 'Drag & Drop to Upload File',
-            'or': 'OR',
-            'click_browse': 'Click to Browse',
-            'result': 'Result',
-            'upload_prompt': 'Upload an image to see the result',
-            'error_title': 'Error',
-            'please_upload_image': 'Please upload an image file.',
-            'close': 'Close',
-        },
-        'zh': {
-            'language_name': '中文',
-            'title': 'MRI 赛博医生',
-            'drag_drop': '拖拽上传文件',
-            'or': '或',
-            'click_browse': '点击浏览文件',
-            'result': '结果',
-            'upload_prompt': '上传图像以查看结果',
-            'error_title': '错误',
-            'please_upload_image': '请上传一个图像文件。',
-            'close': '关闭',
-        },
-        'ja': {
-            'language_name': '日本語',
-            'title': 'MRI サイバードクター',
-            'drag_drop': 'ファイルをドラッグアンドドロップしてごアップロード',
-            'or': 'または',
-            'click_browse': 'クリックしてファイルを選択',
-            'result': '結果',
-            'upload_prompt': 'イメージをアップロード後、結果を見る事ができます。',
-            'error_title': 'エラー',
-            'please_upload_image': 'イメージをアップロードください ＞＜',
-            'close': '閉じる',
-        },
-    };
-    let currentLang = 'en';
+    <div id="enlarged-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 hidden z-50">
+        <img id="enlarged-image" src="" alt="Enlarged Result" class="max-w-full max-h-full object-contain">
+    </div>
+    <script>
+        const dragArea = document.getElementById('drag-area');
+        const fileInput = document.getElementById('file-input');
+        const resultContainer = document.getElementById('result-container');
+        const resultPrompt = document.getElementById('result-prompt');
+        const resultImage = document.getElementById('result-image');
+        const loading = document.getElementById('loading');
+        const errorModal = document.getElementById('error-modal');
+        const errorMessage = document.getElementById('error-message');
+        const closeModal = document.getElementById('close-modal');
+        const enlargedModal = document.getElementById('enlarged-modal');
+        const enlargedImage = document.getElementById('enlarged-image');
+        const languageMenuButton = document.getElementById('language-menu-button');
+        const languageMenu = document.getElementById('language-menu');
+        const translations = {
+            'en': {
+                'language_name': 'English',
+                'title': 'MRI Cyber Doctor',
+                'drag_drop': 'Drag & Drop to Upload File',
+                'or': 'OR',
+                'click_browse': 'Click to Browse',
+                'result': 'Result',
+                'upload_prompt': 'Upload an image to see the result',
+                'error_title': 'Error',
+                'please_upload_image': 'Please upload an image file.',
+                'close': 'Close',
+                'processing_error': 'An error occurred while processing the image.',
+            },
+            'zh': {
+                'language_name': '中文',
+                'title': 'MRI 赛博医生',
+                'drag_drop': '拖拽上传文件',
+                'or': '或',
+                'click_browse': '点击浏览文件',
+                'result': '结果',
+                'upload_prompt': '上传图像以查看结果',
+                'error_title': '错误',
+                'please_upload_image': '请上传一个图像文件。',
+                'close': '关闭',
+                'processing_error': '处理图像时发生错误。',
+            },
+            'ja': {
+                'language_name': '日本語',
+                'title': 'MRI サイバードクター',
+                'drag_drop': 'ファイルをドラッグアンドドロップしてごアップロード',
+                'or': 'または',
+                'click_browse': 'クリックしてファイルを選択',
+                'result': '結果',
+                'upload_prompt': 'イメージをアップロード後、結果を見る事ができます。',
+                'error_title': 'エラー',
+                'please_upload_image': 'イメージをアップロードください ＞＜',
+                'close': '閉じる',
+                'processing_error': 'イメージ処理中にエラーが発生しました。',
+            },
+        };
+        let currentLang = 'en';
 
-    function updateTexts(lang) {
-        currentLang = lang;
-        document.getElementById('title').textContent = translations[lang]['title'];
-        document.getElementById('language-button-text').textContent = translations[lang]['language_name'];
-        document.getElementById('drag-drop-text').textContent = translations[lang]['drag_drop'];
-        document.getElementById('or-text').textContent = translations[lang]['or'];
-        document.getElementById('click-to-browse-text').textContent = translations[lang]['click_browse'];
-        document.getElementById('result-text').textContent = translations[lang]['result'];
-        document.getElementById('upload-prompt').textContent = translations[lang]['upload_prompt'];
-        document.getElementById('error-title').textContent = translations[lang]['error_title'];
-        document.getElementById('close-modal').textContent = translations[lang]['close'];
-    }
-
-    const languageOptions = document.querySelectorAll('.language-option');
-
-    languageOptions.forEach(option => {
-        option.addEventListener('click', (e) => {
-            e.preventDefault();
-            const selectedLang = option.getAttribute('data-lang');
-            updateTexts(selectedLang);
-            languageMenu.classList.add('hidden');
-        });
-    });
-
-    languageMenuButton.addEventListener('click', () => {
-        languageMenu.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!languageMenuButton.contains(e.target) && !languageMenu.contains(e.target)) {
-            languageMenu.classList.add('hidden');
+        function updateTexts(lang) {
+            currentLang = lang;
+            document.getElementById('title').textContent = translations[lang]['title'];
+            document.getElementById('language-button-text').textContent = translations[lang]['language_name'];
+            document.getElementById('drag-drop-text').textContent = translations[lang]['drag_drop'];
+            document.getElementById('or-text').textContent = translations[lang]['or'];
+            document.getElementById('click-to-browse-text').textContent = translations[lang]['click_browse'];
+            document.getElementById('result-text').textContent = translations[lang]['result'];
+            document.getElementById('upload-prompt').textContent = translations[lang]['upload_prompt'];
+            document.getElementById('error-title').textContent = translations[lang]['error_title'];
+            document.getElementById('close-modal').textContent = translations[lang]['close'];
         }
-    });
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dragArea.addEventListener(eventName, preventDefaults, false);
-    });
+        const languageOptions = document.querySelectorAll('.language-option');
 
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+        languageOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                const selectedLang = option.getAttribute('data-lang');
+                updateTexts(selectedLang);
+                languageMenu.classList.add('hidden');
+            });
+        });
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dragArea.addEventListener(eventName, highlight, false);
-    });
+        languageMenuButton.addEventListener('click', () => {
+            languageMenu.classList.toggle('hidden');
+        });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        dragArea.addEventListener(eventName, unhighlight, false);
-    });
+        document.addEventListener('click', (e) => {
+            if (!languageMenuButton.contains(e.target) && !languageMenu.contains(e.target)) {
+                languageMenu.classList.add('hidden');
+            }
+        });
 
-    function highlight() {
-        dragArea.classList.add('active');
-    }
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-    function unhighlight() {
-        dragArea.classList.remove('active');
-    }
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-    dragArea.addEventListener('drop', handleDrop, false);
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragArea.addEventListener(eventName, highlight, false);
+        });
 
-    dragArea.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, unhighlight, false);
+        });
 
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        handleFiles(files);
-    }
+        function highlight() {
+            dragArea.classList.add('active');
+        }
 
-    function handleFiles(files) {
-        if (files.length > 0) {
-            const file = files[0];
-            if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
-                showLoading();
-                setTimeout(() => {
-                    // TODO: 与后端交互
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        resultPrompt.classList.add('hidden');
-                        resultImage.src = e.target.result;
+        function unhighlight() {
+            dragArea.classList.remove('active');
+        }
+
+        dragArea.addEventListener('drop', handleDrop, false);
+
+        dragArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+        async function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            await handleFiles(files);
+        }
+
+        async function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'image/png' || file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                    showLoading();
+                    try {
+                        const formData = new FormData();
+                        formData.append('image', file);
+
+                        const response = await fetch('/process', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            let errorData;
+                            try {
+                                errorData = await response.json();
+                                if (errorData.error) {
+                                    throw new Error(errorData.error);
+                                } else {
+                                    throw new Error(translations[currentLang]['processing_error']);
+                                }
+                            } catch {
+                                throw new Error(translations[currentLang]['processing_error']);
+                            }
+                        }
+
+                        const blob = await response.blob();
+                        const objectURL = URL.createObjectURL(blob);
+                        resultImage.src = objectURL;
                         resultImage.classList.remove('hidden');
+                        resultPrompt.classList.add('hidden');
+                    } catch (error) {
+                        showError(error.message || translations[currentLang]['processing_error']);
+                    } finally {
                         hideLoading();
-                    };
-                    reader.readAsDataURL(file);
-                }, 2000);
-            } else {
-                showError('please_upload_image');
+                    }
+                } else {
+                    showError(translations[currentLang]['please_upload_image']);
+                }
             }
         }
-    }
 
-    function showLoading() {
-        loading.classList.remove('hidden');
-    }
+        function showLoading() {
+            loading.classList.remove('hidden');
+        }
 
-    function hideLoading() {
-        loading.classList.add('hidden');
-    }
+        function hideLoading() {
+            loading.classList.add('hidden');
+        }
 
-    function showError(messageKey) {
-        errorMessage.textContent = translations[currentLang][messageKey];
-        errorModal.classList.remove('hidden');
-        errorModal.classList.add('fade-in');
-    }
-
-    closeModal.addEventListener('click', () => {
-        errorModal.classList.add('fade-out');
-        setTimeout(() => {
-            errorModal.classList.add('hidden');
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorModal.classList.remove('hidden');
             errorModal.classList.remove('fade-out');
-        }, 300);
-    });
-
-    resultContainer.addEventListener('click', () => {
-        if (!resultImage.classList.contains('hidden')) {
-            enlargedImage.src = resultImage.src;
-            enlargedModal.classList.remove('hidden');
-            enlargedModal.classList.add('fade-in');
+            errorModal.classList.add('fade-in');
         }
-    });
 
-    enlargedModal.addEventListener('click', (e) => {
-        if (e.target === enlargedModal) {
-            enlargedModal.classList.add('fade-out');
+        closeModal.addEventListener('click', () => {
+            errorModal.classList.remove('fade-in');
+            errorModal.classList.add('fade-out');
             setTimeout(() => {
-                enlargedModal.classList.add('hidden');
-                enlargedModal.classList.remove('fade-out');
+                errorModal.classList.add('hidden');
+                errorModal.classList.remove('fade-out');
             }, 300);
-        }
-    });
+        });
 
-    updateTexts(currentLang);
+        resultContainer.addEventListener('click', () => {
+            if (!resultImage.classList.contains('hidden')) {
+                enlargedImage.src = resultImage.src;
+                enlargedModal.classList.remove('hidden');
+                enlargedModal.classList.remove('fade-out');
+                enlargedModal.classList.add('fade-in');
+            }
+        });
 
-    const elementsToFix = ['title', 'drag-drop-text', 'click-to-browse-text', 'result-text', 'upload-prompt'];
-    elementsToFix.forEach(id => {
-        const elem = document.getElementById(id);
-        elem.style.minHeight = elem.offsetHeight + 'px';
-    });
-</script>
+        enlargedModal.addEventListener('click', (e) => {
+            if (e.target === enlargedModal) {
+                enlargedModal.classList.remove('fade-in');
+                enlargedModal.classList.add('fade-out');
+                setTimeout(() => {
+                    enlargedModal.classList.add('hidden');
+                    enlargedModal.classList.remove('fade-out');
+                }, 300);
+            }
+        });
+
+        updateTexts(currentLang);
+
+        const elementsToFix = ['title', 'drag-drop-text', 'click-to-browse-text', 'result-text', 'upload-prompt'];
+        elementsToFix.forEach(id => {
+            const elem = document.getElementById(id);
+            elem.style.minHeight = elem.offsetHeight + 'px';
+        });
+    </script>
 </body>
+
 </html>

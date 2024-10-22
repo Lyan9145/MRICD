@@ -9,10 +9,10 @@ from .init_weights import init_weights
 from torchvision import models
 
 
-class UNet(nn.Module):
+class UNet1Plus(nn.Module):
     def __init__(self, n_channels=3, n_classes=1, bilinear=True, feature_scale=4, 
                  is_deconv=True, is_batchnorm=True):
-        super(UNet, self).__init__()        
+        super(UNet1Plus, self).__init__()
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Modified By : Leich66
 import numpy as np
 import torch
 import torch.nn as nn
@@ -21,7 +22,7 @@ class UNet(nn.Module):
         filters = [64, 128, 256, 512, 1024]
 
         # downsampling
-        self.conv1 = unetConv2(self.n_channels, filters[0], ks=4, self.is_batchnorm)
+        self.conv1 = unetConv2(self.n_channels, filters[0], self.is_batchnorm, ks=4)
         self.maxpool1 = nn.MaxPool2d(kernel_size=2)
 
         self.conv2 = unetConv2(filters[0], filters[1], self.is_batchnorm)

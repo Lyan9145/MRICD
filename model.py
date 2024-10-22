@@ -4,18 +4,22 @@ import nibabel as nib
 from pathlib import Path
 from model.UNet import UNet
 
-class ModelUNet(UNet):
+class ModelUNet():
     device = None
     model = None
     ckpt = None
     images = None
     def __init__(self):
-        super(ModelUNet, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = UNet(n_channels=4, n_classes=1)
 
-    def load_ckpt(self, ckpt):
-        self.model.load_state_dict(torch.load(ckpt))
+    def load_ckpt(self):
+        # search for the latest checkpoint in ./ckpt
+        ckpt = Path("./ckpt").rglob("*.pth")
+        if not ckpt:
+            raise FileNotFoundError("No checkpoint found in ./ckpt")
+        self.ckpt = sorted(ckpt, key=lambda x: x.stat().st_mtime, reverse=True)[0]
+        self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device))
 
 
     def load_data(img_path: Path, data_type: str, key_frame: int = 50):
@@ -53,3 +57,10 @@ class ModelUNet(UNet):
         pred_mask = (pred_mask - np.min(pred_mask)) * 1.2 / (np.max(pred_mask) - np.min(pred_mask))
         pred_mask = np.astype(np.int8)
         return pred_mask
+    
+if __name__ == "__main__":
+    model = ModelUNet()
+    # model.load_ckpt()
+    images = model.load_data(Path("./data"), "img")
+    pred_mask = model.predict(images)
+    print(pred_mask)

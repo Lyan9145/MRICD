@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import nibabel as nib
 from pathlib import Path
-from model.UNet import UNet
+from model import UNet
 
 class ModelUNet():
     device = None
@@ -55,7 +55,7 @@ class ModelUNet():
             pred_mask = self.model(images)
         pred_mask = pred_mask.squeeze().cpu().detach().numpy()
         pred_mask = (pred_mask - np.min(pred_mask)) * 1.2 / (np.max(pred_mask) - np.min(pred_mask))
-        pred_mask = np.astype(np.int8)
+        pred_mask = pred_mask.astype(np.int8)
         return pred_mask
     
 if __name__ == "__main__":

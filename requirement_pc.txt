@@ -3,4 +3,4 @@ torchvision == 0.16.0
 numpy
 Pillow
 nibabel
-flask
+flask[async]

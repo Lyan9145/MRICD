@@ -2,10 +2,22 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import io
 import torch
+
+USING_NPU = False
+try:
+    import torch_npu
+    USING_NPU = True
+except ImportError:
+    pass
+
 import numpy as np
 import nibabel as nib
 from pathlib import Path
 from model.unet_model import UNet
+
+# Transefer to Accend NPU
+if USING_NPU:
+    from torch_npu.contrib import transfer_to_npu
 
 class ModelUNet:
     device = None
@@ -14,6 +26,7 @@ class ModelUNet:
     images = None
     def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"[INFO] Using {self.device}")
         self.model = UNet(n_channels=4, n_classes=1)
 
     def load_ckpt(self):
@@ -45,10 +58,7 @@ class ModelUNet:
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', transparent=True)
-        buf.seek(0)
-        im = Image.open(buf).convert('RGBA')
+        im = Image.fromarray(pred_mask)
 
         return im
 

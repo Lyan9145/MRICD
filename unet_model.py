@@ -42,11 +42,14 @@ class ModelUNet:
         images = [flair, t1, t1ce, t2]
         # 转换成4*240*240
         for i in range(len(images)):
-            images[i] = images[i].resize((240, 240))
+            images[i] = Image.open(images[i])
+            images[i] = images[i].convert("L")
+            # images[i] = images[i].resize((240, 240))
             images[i] = np.array(images[i])
             # images[i] = np.expand_dims(images[i], axis=-1)
-        images = np.array(images)
+        images = np.array([images])
 
+        print(f"[INFO] Start prediction")
         self.model.eval()
         with torch.no_grad():
             images = torch.tensor(images, device=self.device, dtype=torch.float32)
@@ -54,13 +57,18 @@ class ModelUNet:
             res = self.model(images)
         pred_mask = res.cpu().squeeze().detach().numpy()
         pred_mask = (pred_mask - pred_mask.min()) / (pred_mask.max() - pred_mask.min())
-        pred_mask = pred_mask > (threshold * pred_mask.max())
+        pred_mask = (pred_mask > (threshold * pred_mask.max()))*255
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image
-        im = Image.fromarray(pred_mask)
+        im = Image.fromarray(pred_mask, mode="L")
+        im.convert('RGB')
+        img_byte_arr = io.BytesIO()
+        im.save(img_byte_arr, format='JPEG')
+        img_byte_arr.seek(0)
 
-        return im
+        print(f"[INFO] Prediction done")
+        return img_byte_arr
 
 
 #  Test run model

@@ -50,7 +50,11 @@ class ModelUNet:
         
     #     return np.array(images)
 
-    def predict(self, images: Image, threshold: float = 0.68):
+    def predict(self, flair, t1, t1ce, t2, threshold: float = 0.68):
+        images = [flair, t1, t1ce, t2]
+        # 转换成4*240*240
+        for i in range(len(images)):
+            images[i] = images[i].resize((240, 240))
         images = np.array(images)
 
         self.model.eval()

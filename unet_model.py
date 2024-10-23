@@ -27,7 +27,7 @@ class ModelUNet:
         self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device, weights_only=False))
 
 
-    def predict(self, flair, t1, t1ce, t2, threshold: float = 0.68):
+    def predict(self, flair, t1, t1ce, t2, threshold: float = 0.75):
         images = [flair, t1, t1ce, t2]
         # 转换成4*240*240
         for i in range(len(images)):
@@ -46,14 +46,15 @@ class ModelUNet:
             res = self.model(images)
         pred_mask = res.cpu().squeeze().detach().numpy()
         pred_mask = (pred_mask - pred_mask.min()) / (pred_mask.max() - pred_mask.min())
-        pred_mask = (pred_mask > (threshold * pred_mask.max()))*255
+        pred_mask = (pred_mask > (threshold * pred_mask.max())) * 255
+        if pred_mask.sum() > 1000: pred_mask = np.zeros(pred_mask.shape)
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image
         im = Image.fromarray(pred_mask, mode="L")
         im.convert('RGB')
         img_byte_arr = io.BytesIO()
-        im.save(img_byte_arr, format='JPEG')
+        im.save(img_byte_arr, format='JPEG', quality=100)
         img_byte_arr.seek(0)
 
         print(f"[INFO] Prediction done")

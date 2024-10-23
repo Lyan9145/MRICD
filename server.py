@@ -40,7 +40,7 @@ async def upload():
                     img = img.convert('RGB')
                 img = img.resize((240, 240))
                 img_io = io.BytesIO()
-                img.save(img_io, 'JPEG')
+                img.save(img_io, 'JPEG', quality=100)
                 img_io.seek(0)
                 images[file_key] = img_io
             else:

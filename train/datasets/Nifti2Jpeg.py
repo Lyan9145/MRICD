@@ -6,9 +6,9 @@ from pathlib import Path
 
 # parse arg, enable usage like "Nifti2Jpeg ./input_dir -o ./output_dir"
 parser = argparse.ArgumentParser(description='Convert Nifti to Jpeg')
-parser.add_argument('input_dir', type=str, help='input directory', default='./')
+parser.add_argument('-i', '--input_dir', type=str, help='input directory', default='./BraTS2021_Training_Data')
 parser.add_argument('-o', '--output_dir', type=str, help='output directory', default='./nii2jpg_output')
-parser.add_argument('-f', '--frames', type=int, help='frame index', default=55)
+parser.add_argument('-f', '--frames', type=int, help='frame index', default=60)
 
 def read_nifti(nii_path: Path, frame: int):
     data = nib.load(nii_path).get_fdata()[:,:,frame]
@@ -28,11 +28,11 @@ def recursive_convert(input: Path, output: Path, frame: int):
     for path in input.iterdir():
         if path.is_dir():
             mid = output.joinpath(path.name)
-            mid.mkdir()
+            if not mid.is_dir(): mid.mkdir()
             recursive_convert(path, mid, frame)
         if str(path).endswith(".nii.gz"):
             img = read_nifti(path, frame)
-            img.save(output.joinpath(f"{path.stem}.jpg"))
+            img.save(output.joinpath(f"{path.stem}.jpg"), quality=100)
 
 
 if __name__ == "__main__":

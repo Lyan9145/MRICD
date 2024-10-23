@@ -25,41 +25,18 @@ class ModelUNet:
         self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device, weights_only=False))
 
 
-    # def load_data(img_path: Path, data_type: str, key_frame: int = 50):
-    #     IMG_TYPE = ("flair", "t1", "t1ce", "t2")
-    #     MASK_TYPE = "seg"
-
-    #     def get_img(path: Path, name: str, frame: int = 50):
-    #         img_serial_path = path.joinpath(f"{path.name}_{name}.nii.gz")
-    #         if not img_serial_path.exists():
-    #             raise FileNotFoundError(f"{img_serial_path} does not exist")
-    #         img = nib.load(img_serial_path).get_fdata()[:, :, frame]
-    #         px_max = np.max(img)
-    #         if px_max > 0:
-    #             img = img / px_max
-    #         return img.astype(np.float32)
-
-    #     if data_type == "mask":
-    #         image = get_img(img_path, MASK_TYPE, key_frame)
-    #         return image.astype(np.int32)
-        
-    #     images = []
-    #     for img_type in IMG_TYPE:
-    #         image = get_img(img_path, img_type, key_frame)
-    #         images.append(image)
-        
-    #     return np.array(images)
-
     def predict(self, flair, t1, t1ce, t2, threshold: float = 0.68):
         images = [flair, t1, t1ce, t2]
         # 转换成4*240*240
         for i in range(len(images)):
             images[i] = images[i].resize((240, 240))
+            images[i] = np.array(images[i])
+            # images[i] = np.expand_dims(images[i], axis=-1)
         images = np.array(images)
 
         self.model.eval()
         with torch.no_grad():
-            images.to(device=self.device, dtype=torch.float32)
+            images = torch.tensor(images, device=self.device, dtype=torch.float32)
             self.model.to(device=self.device)
             res = self.model(images)
         pred_mask = res.cpu().squeeze().detach().numpy()
@@ -80,6 +57,13 @@ class ModelUNet:
 if __name__ == "__main__":
     model = ModelUNet()
     model.load_ckpt()
+    IMG_TYPE = ("flair", "t1", "t1ce", "t2")
+    images = []
+    for img_type in IMG_TYPE:
+        img = Image.open(f"nii2jpg_output\BraTS2021_00621_{img_type}.nii.jpg")
+        images.append(img)
+    res = model.predict(*images)
+    res.show()
     # images = model.load_data(Path("./data"), "img")
     # pred_mask = model.predict(images)
     # print(pred_mask)

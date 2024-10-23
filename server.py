@@ -1,61 +1,69 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, request, render_template, send_file, jsonify
+from werkzeug.utils import secure_filename
 from PIL import Image
 import io
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-from unet_model import ModelUNet
 
 app = Flask(__name__)
+
 app.config.update(
     MAX_CONTENT_LENGTH=16 * 1024 * 1024,
     PORT=5674,
     HOST='localhost',
     THREADS=4
 )
-executor = ThreadPoolExecutor(app.config['THREADS'])
 
-model_instance = ModelUNet()
-try:
-    model_instance.load_ckpt()
-except Exception as e:
-    raise RuntimeError(f"Failed to load model checkpoint: {e}")
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
 
-def process_image(image_bytes):
-    try:
-        img = Image.open(io.BytesIO(image_bytes)).convert('RGBA')
-        result = model_instance.predict(img, threshold=0.68)
-        img_io = io.BytesIO()
-        result.save(img_io, format='PNG')
-        img_io.seek(0)
-        return img_io
-    except Exception as e:
-        raise RuntimeError(f"Image processing failed: {e}")
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
-def index():
+async def index():
     return render_template('index.html')
 
-@app.route('/process', methods=['POST'])
-async def process():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image part in the request.'}), 400
-
-    file = request.files['image']
-    if file.filename == '':
-        return jsonify({'error': 'No image selected for uploading.'}), 400
-
+@app.route('/upload', methods=['POST'])
+async def upload():
+    required_files = ['flair', 't1', 't1ce', 't2']
+    images = {}
     try:
-        image_bytes = file.read()
-        if not image_bytes:
-            return jsonify({'error': 'Empty image file.'}), 400
-
-        loop = asyncio.get_event_loop()
-        img_io = await loop.run_in_executor(executor, process_image, image_bytes)
-        return send_file(img_io, mimetype='image/png')
-    except RuntimeError as re:
-        return jsonify({'error': str(re)}), 500
+        for file_key in required_files:
+            if file_key not in request.files:
+                return jsonify({'error': f'Missing file: {file_key}'}), 400
+            file = request.files[file_key]
+            if file.filename == '':
+                return jsonify({'error': f'No selected file for {file_key}'}), 400
+            if file and allowed_file(file.filename):
+                img = Image.open(file.stream)
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+                img = img.resize((240, 240))
+                img_io = io.BytesIO()
+                img.save(img_io, 'JPEG', quality=85)
+                img_io.seek(0)
+                images[file_key] = img_io
+            else:
+                return jsonify({'error': f'Invalid file type for {file_key}. Only .jpg and .jpeg are allowed.'}), 400
+        # TODO: Run model processing with images['flair'], images['t1'], images['t1ce'], images['t2']
+        processed_image = images['flair']  # Replace with model output
+        return send_file(processed_image, mimetype='image/jpeg')
     except Exception as e:
-        return jsonify({'error': f"Unexpected error: {e}"}), 500
+        return jsonify({'error': str(e)}), 500
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({'error': 'File too large. Max size is 16MB.'}), 413
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Not found.'}), 404
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return jsonify({'error': 'Method not allowed.'}), 405
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error.'}), 500
 
 if __name__ == '__main__':
-    app.run(host=app.config['HOST'], port=app.config['PORT'])
+    app.run(host=app.config['HOST'], port=app.config['PORT'], threaded=True)

@@ -9,6 +9,9 @@ data/*
 # temp
 temp/*
 
+#nii2jpg_output
+nii2jpg_output/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

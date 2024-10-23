@@ -2,22 +2,11 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import io
 import torch
-
-USING_NPU = False
-try:
-    import torch_npu
-    USING_NPU = True
-except ImportError:
-    pass
-
 import numpy as np
 import nibabel as nib
 from pathlib import Path
 from model.unet_model import UNet
 
-# Transefer to Accend NPU
-if USING_NPU:
-    from torch_npu.contrib import transfer_to_npu
 
 class ModelUNet:
     device = None

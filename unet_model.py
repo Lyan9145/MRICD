@@ -48,7 +48,7 @@ class ModelUNet:
         pred_mask = res.cpu().squeeze().detach().numpy()
         pred_mask = (pred_mask - pred_mask.min()) / (pred_mask.max() - pred_mask.min())
         pred_mask = (pred_mask > (threshold * pred_mask.max())) * 255
-        if pred_mask.sum() > 1000: pred_mask = np.zeros(pred_mask.shape)
+        if pred_mask.sum() > (1500*255): pred_mask = np.zeros(pred_mask.shape)
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image

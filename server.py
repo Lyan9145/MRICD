@@ -11,6 +11,7 @@ app.config.update(
     MAX_CONTENT_LENGTH=16 * 1024 * 1024,
     PORT=5674,
     HOST='localhost',
+    # HOST='192.168.43.182',
     THREADS=4
 )
 

@@ -24,6 +24,7 @@ class ModelUNet:
         if not ckpt:
             raise FileNotFoundError("No checkpoint found in ./ckpt")
         self.ckpt = sorted(ckpt, key=lambda x: x.stat().st_mtime, reverse=True)[0]
+        # self.model = torch.load(self.ckpt, map_location=self.device, weights_only=False)
         self.model.load_state_dict(torch.load(self.ckpt, map_location=self.device, weights_only=False))
 
 
@@ -48,7 +49,8 @@ class ModelUNet:
         pred_mask = res.cpu().squeeze().detach().numpy()
         pred_mask = (pred_mask - pred_mask.min()) / (pred_mask.max() - pred_mask.min())
         pred_mask = (pred_mask > (threshold * pred_mask.max())) * 255
-        if pred_mask.sum() > 1000: pred_mask = np.zeros(pred_mask.shape)
+        print(f"[INFO] Mask sum: {pred_mask.sum()}")
+        if pred_mask.sum() > (1000 * 255): pred_mask = np.zeros(pred_mask.shape)
         pred_mask = pred_mask.astype(np.int8)
 
         # convert to PIL image

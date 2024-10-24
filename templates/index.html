@@ -309,9 +309,9 @@
                 const checkbox = document.getElementById(`checkbox-${layer}`);
                 checkbox.addEventListener('change', () => {
                     visibleLayers[layer] = checkbox.checked;
-                    if (layer === 'seg' && !checkbox.checked) {
-                        images.seg = null;
-                    }
+                    // if (layer === 'seg' && !checkbox.checked) {
+                    //     images.seg = null;
+                    // }
                     updateDisplay();
                 });
             });

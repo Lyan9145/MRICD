@@ -1,5 +1,5 @@
 # MRI Cyber Doctor (MRICD)
-
+![](./1.png)
 ## Overview
 
 MRI Cyber Doctor (MRICD) is a project aimed at processing MRI images using a UNet model to segment and analyze brain tumors. The project includes a Flask-based web application that allows users to upload MRI images and receive processed results.

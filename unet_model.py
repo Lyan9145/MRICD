@@ -34,7 +34,8 @@ class ModelUNet:
             images[i] = Image.open(images[i])
             images[i] = images[i].convert("L")
             # images[i] = images[i].resize((240, 240))
-            images[i] = np.array(images[i])
+            images[i] = np.array(images[i], dtype=np.float32)
+            images[i] = (images[i] - images[i].min()) / (images[i].max() - images[i].min())
             # images[i] = np.expand_dims(images[i], axis=-1)
         images = np.array([images])
 
@@ -54,7 +55,8 @@ class ModelUNet:
         im = Image.fromarray(pred_mask, mode="L")
         im.convert('RGB')
         img_byte_arr = io.BytesIO()
-        im.save(img_byte_arr, format='JPEG', quality=100)
+        # im.save(img_byte_arr, format='JPEG', quality=100)
+        im.save(img_byte_arr, format='PNG', quality=100)
         img_byte_arr.seek(0)
 
         print(f"[INFO] Prediction done")
@@ -69,6 +71,7 @@ if __name__ == "__main__":
     images = []
     for img_type in IMG_TYPE:
         img = Image.open(f"nii2jpg_output\BraTS2021_00621_{img_type}.nii.jpg")
+        # img = f"train/datasets/nii2jpg_output/test2/BraTS2021_00621_{img_type}.nii.png"
         images.append(img)
     res = model.predict(*images)
     res.show()

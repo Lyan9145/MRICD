@@ -232,7 +232,8 @@
                     for (const type of ['flair', 't1', 't1ce', 't2']) {
                         const src = images[type];
                         const blob = await fetch(src).then(r => r.blob());
-                        formData.append(type, blob, `${type}.jpg`);
+                        // formData.append(type, blob, `${type}.jpg`);
+                        formData.append(type, blob, `${type}.png`);
                     }
 
                     const response = await fetch('/upload', {

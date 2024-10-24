@@ -34,7 +34,6 @@ def load_data(img_path: Path, data_type: str, key_frame: int = KEY_FRAME):
 
     return np.array(images)
 
-
 def get_data_path(dataset_path: Path) -> list:
     return [d for d in dataset_path.iterdir() if not d.name.startswith('.')]
 

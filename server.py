@@ -14,7 +14,8 @@ app.config.update(
     THREADS=4
 )
 
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
+# ALLOWED_EXTENSIONS = {'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -36,18 +37,21 @@ async def upload():
                 return jsonify({'error': f'No selected file for {file_key}'}), 400
             if file and allowed_file(file.filename):
                 img = Image.open(file.stream)
-                if img.mode != 'RGB':
-                    img = img.convert('RGB')
-                img = img.resize((240, 240))
+                # if img.mode != 'RGB':
+                #     img = img.convert('RGB')
+                # img = img.resize((240, 240))
                 img_io = io.BytesIO()
-                img.save(img_io, 'JPEG', quality=100)
+                # img.save(img_io, 'JPEG', quality=100)
+                img.save(img_io, 'PNG', quality=100)
                 img_io.seek(0)
                 images[file_key] = img_io
             else:
-                return jsonify({'error': f'Invalid file type for {file_key}. Only .jpg and .jpeg are allowed.'}), 400
+                # return jsonify({'error': f'Invalid file type for {file_key}. Only .jpg and .jpeg are allowed.'}), 400
+                return jsonify({'error': f'Invalid file type for {file_key}. Only .png is allowed.'}), 400
         # TODO: Run model processing with images['flair'], images['t1'], images['t1ce'], images['t2']
         processed_image = model.predict(images['flair'], images['t1'], images['t1ce'], images['t2'])  # Replace with model output
-        return send_file(processed_image, mimetype='image/jpeg')
+        # return send_file(processed_image, mimetype='image/jpeg')
+        return send_file(processed_image, mimetype='image/png')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

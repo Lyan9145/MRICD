@@ -5,8 +5,8 @@ from PIL import Image
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Convert Nifti to Jpeg')
-parser.add_argument('-i', '--input_dir', type=str, help='input directory', default='./BraTS2021_Training_Data')
-parser.add_argument('-o', '--output_dir', type=str, help='output directory', default='./nii2img_output2')
+parser.add_argument('-i', '--input_dir', type=str, help='input directory', default='./datasets/BraTS2021_Training_Data')
+parser.add_argument('-o', '--output_dir', type=str, help='output directory', default='./nii2img_output')
 parser.add_argument('-f', '--frames', type=int, help='frame index', default=60)
 parser.add_argument('--format', type=str, help='output format', default='png')
 

@@ -11,17 +11,17 @@ from torchsummary import summary
 from tqdm import tqdm
 
 from dice_loss import dice_loss
-# from models import UNet
-# from models import UNet2Plus as UNet
-from model import UNet3Plus as UNet
-# from models import UNet3Plus_DeepSup_CGM as UNet
 
-from datasets import BraTSDataset, BraTSDataset2, BraTSDataset3
+from model import UNet
+# from model import UNet1Plus as UNet
+# from model import UNet2Plus as UNet
+# from model import UNet3Plus as UNet
+
+from data import BraTSDataset, BraTSDataset2, BraTSDataset3
 from evaluate import evaluate
 
-DATA_DIR = './datasets/BraTS2021_Training_Data'
-# DATA_DIR = '../data-1/BraTS2021/BraTS2021_Training_Data'
-CKPT_DIR = './ckpt/'
+DATA_DIR = '../data/BraTS2021_Training_Data'
+CKPT_DIR = '../ckpt/'
 
 
 def train_model(

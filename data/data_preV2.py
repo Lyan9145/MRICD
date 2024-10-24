@@ -64,6 +64,6 @@ def save_preprocessed_data(dataset_dir: Path, data_npz_dir: str, key_frame_slice
 
 
 # memory estimation:
-# 240 * 240 * 5(modality) * 155(series) * 1251(nums) * 8(dtype) = 52 GBytes
+# 240 * 240 * 5(modality) * 155(max series) * 1251(nums) * 8(dtype) = 52 GBytes
 if __name__ == "__main__":
     save_preprocessed_data(data_dir, "./big_data.npz", list(range(50, 52)))

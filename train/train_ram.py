@@ -14,17 +14,15 @@ from tqdm import tqdm
 from dice_loss import dice_loss
 
 from model import UNet
-from model import UNet1 as UNet
+# from model import UNet1Plus as UNet
 # from model import UNet2Plus as UNet
 # from model import UNet3Plus as UNet
-# from model import UNet3Plus_DeepSup_CGM as UNet
 
-from datasets import BraTSDataset
-from datasets import BraTSDataset2
+from data import BraTSDataset, BraTSDataset2
 from evaluate import evaluate
 
 DATA_DIR = './datasets/data-50_60.npz'
-CKPT_DIR = './ckpt/'
+CKPT_DIR = '../ckpt/'
 
 def train_model(
         model,

@@ -3,8 +3,8 @@
 !ckpt/*.md
 
 # data
-data/*
-!data/*.md
+data/datasets
+data/nii2jpg_output
 
 # temp
 temp/*
